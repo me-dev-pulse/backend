@@ -16,7 +16,7 @@ func main() {
 	godotenv.Load()
 	database.InitDB()
 
-	services.StartMonitor(24 * time.Minute)
+	services.StartMonitor(1 * time.Minute)
 
 	app := fiber.New()
 
