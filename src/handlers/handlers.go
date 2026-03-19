@@ -16,6 +16,38 @@ func GetProjects(c *fiber.Ctx) error {
 	return c.JSON(projects)
 }
 
+func GetProject(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var project models.Project
+	err := database.DB.Get(&project, "SELECT * FROM projects WHERE id = $1", id)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var summary models.ProjectSummary
+	
+	var uptime float64
+	query := `
+		SELECT (COUNT(CASE WHEN is_up = true THEN 1 END) * 100.0 / COUNT(*))
+		FROM checks 
+		WHERE project_id = $1 AND created_at > NOW() - INTERVAL '24 hours'`
+	
+	database.DB.Get(&uptime, query, id)
+
+	var lastStatus bool
+	database.DB.Get(&lastStatus, "SELECT is_up FROM checks WHERE project_id = $1 ORDER BY created_at DESC LIMIT 1", id)
+
+	summary = models.ProjectSummary{
+		Project:       project,
+		CurrentStatus: lastStatus,
+		Uptime24h:     uptime,
+		SSLExpiryDays: services.GetSSLExpiryDays(project.URL),
+	}
+
+
+	return c.JSON(summary)
+}
+
 func GetProjectStats(c *fiber.Ctx) error {
 	id := c.Params("id")
 	

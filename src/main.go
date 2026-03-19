@@ -30,11 +30,11 @@ func main() {
 	api.Get("/health", func(c *fiber.Ctx) error {
 		return c.SendString("DevPulse API working 🚀")
 	})
-	api.Get("/projects", handlers.GetProjects)
+	api.Get("/projects", handlers.GetProjectsSummary)
+	api.Get("/projects/:id", handlers.GetProject)
 	api.Get("/projects/:id/stats", handlers.GetProjectStats)
 	api.Post("/projects", handlers.CreateProjectHandler)
 	api.Delete("/projects/:id", handlers.DeleteProjectHandler)
-	api.Get("/projects/summary", handlers.GetProjectsSummary)
 
 	log.Fatal(app.Listen(":3000"))
 }
