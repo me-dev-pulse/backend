@@ -14,7 +14,6 @@ func StartMonitor(interval time.Duration) {
 
 	go func() {
 		for range ticker.C {
-			log.Println("🕒 Starting monitoring round...")
 			checkAllProjects()
 		}
 	}()

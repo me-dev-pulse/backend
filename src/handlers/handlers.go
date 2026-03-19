@@ -52,7 +52,7 @@ func GetProjectStats(c *fiber.Ctx) error {
 	id := c.Params("id")
 	
 	var checks []models.Check
-	query := `SELECT * FROM checks WHERE project_id = $1 ORDER BY created_at DESC LIMIT 50`
+	query := `SELECT * FROM checks WHERE project_id = $1 ORDER BY created_at DESC LIMIT 60`
 	err := database.DB.Select(&checks, query, id)
 	
 	if err != nil {
